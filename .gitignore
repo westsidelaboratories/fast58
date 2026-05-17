@@ -5,6 +5,9 @@ node_modules
 out
 dist
 *.tgz
+*.node
+packages/fast58-native/index.js
+packages/fast58-native/index.d.ts
 
 # code coverage
 coverage
@@ -35,3 +38,5 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 
 target
 target/*
+
+.env

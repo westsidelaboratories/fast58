@@ -66,7 +66,7 @@ const suites: Suite[] = [
 
 const candidates: Candidate[] = [
   {
-    name: "fast58",
+    name: "fast58-js",
     encode: fast58.encode,
     decode: fast58.decode,
   },

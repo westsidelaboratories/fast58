@@ -1,21 +1,25 @@
 {
-  "name": "fast58",
-  "main": "index.ts",
+  "name": "fast58-workspace",
+  "private": true,
   "type": "module",
-  "devDependencies": {
-    "@napi-rs/cli": "^3.6.1",
-    "@types/bun": "^1.3.12",
-    "oxlint": "^1.59.0"
-  },
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
-    "lint": "oxlint benchmark.ts bench implementations index.ts test packages/fast58-js/src packages/fast58-js/scripts packages/fast58-js/test packages/fast58-js/bench",
-    "lint:fix": "oxlint --fix benchmark.ts bench implementations index.ts test packages/fast58-js/src packages/fast58-js/scripts packages/fast58-js/test packages/fast58-js/bench",
-    "test": "bun test",
-    "bench": "bun run benchmark.ts",
-    "build:native": "napi build --platform --release"
+    "lint": "bun run lint:js && bun run lint:native",
+    "lint:fix": "bun run lint:fix:js && bun run lint:fix:native",
+    "lint:js": "cd packages/fast58-js && bun run lint",
+    "lint:fix:js": "cd packages/fast58-js && bun run lint:fix",
+    "lint:native": "cd packages/fast58-native && bun run lint",
+    "lint:fix:native": "cd packages/fast58-native && bun run lint:fix",
+    "test": "bun run test:js && bun run test:native",
+    "test:js": "cd packages/fast58-js && bun test",
+    "test:native": "cd packages/fast58-native && bun test",
+    "build:js": "cd packages/fast58-js && bun run build",
+    "build:native": "cd packages/fast58-native && bun run build:native",
+    "bench": "cd packages/fast58-native && bun run bench"
   },
-  "dependencies": {
-    "@scure/base": "^2.0.0",
-    "bs58": "^6.0.0"
+  "devDependencies": {
+    "oxlint": "^1.59.0"
   }
 }

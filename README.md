@@ -11,42 +11,53 @@
 
 # fast58
 
-Base58 encode/decode with benchmarkable JS and native algorithm variants.
+Base58 encode/decode with a published JavaScript package and a separate internal native benchmark lab.
+
+## Install
+
+```sh
+bun add fast58-js
+```
+
+```sh
+npm install fast58-js
+```
+
+The npm package is JS-only. It builds from `packages/fast58-js/src/index.ts` and publishes only the allowlisted package files from `packages/fast58-js/package.json`.
 
 ## Monorepo Layout
 
-The main purpose of this repository is to build bundle and release the javascript version of fast58. It also includes benchmark suites and a rust implmentation we are currently testing.
+The main release target is the JavaScript package published as `fast58-js`. The Rust/N-API experiments and cross-implementation benchmarks live in a separate private workspace package.
 
-- `implementations/js/*`: named JS algorithm candidates
-- `implementations/native.ts`: native binding loader and candidate registry
-- `bench/run.ts`: shared benchmark runner
-- `test/correctness.test.ts`: cross-implementation correctness coverage
-- `src/algorithms/*`: Rust candidate implementations
+- `packages/fast58-js`: published npm package
+- `packages/fast58-native`: private Rust/N-API benchmark lab
+- `packages/fast58-native/implementations/js/*`: named JS algorithm candidates
+- `packages/fast58-native/implementations/native.ts`: native binding loader and candidate registry
+- `packages/fast58-native/bench/run.ts`: shared benchmark runner
+- `packages/fast58-native/test/correctness.test.ts`: cross-implementation correctness coverage
+- `packages/fast58-native/src/algorithms/*`: Rust candidate implementations
 
 ## Commands
 
 ```sh
 bun test
-bun run benchmark.ts
+bun run build:js
+bun run bench
 bun run build:native
 ```
 
 ## Public API
 
 ```ts
-import {
-  decode,
-  decodeBest,
-  decodeStr,
-  encode,
-  encodeBest,
-  encodeStr,
-} from "fast58";
+import fast58 from "fast58-js";
+
+const encoded = fast58.encode(new Uint8Array([104, 101, 108, 108, 111]));
+const decoded = fast58.decode(encoded);
 ```
 
-- `encode` / `decode`: fastest JS winners selected from the benchmarked JS candidates
-- `encodeBest` / `decodeBest`: fixed native winner selected from the generic Rust implementations
-- `encodeStr` / `decodeStr`: string helpers
+- `encode`: encode a `Uint8Array` as Base58
+- `decode`: decode a Base58 string and throw on invalid input
+- `decodeUnsafe`: decode a Base58 string and return `undefined` on invalid input
 
 ## Benchmarking
 
@@ -61,7 +72,7 @@ That lets you add a new algorithm, register it once, and compare it against ever
 
 ## Benchmark lookup table (fast58 vs npm `bs58`)
 
-Measured with `bun run benchmark.ts` on April 8, 2026 (UTC). Values are exact throughput from the benchmark output.
+Measured with `bun run bench` on April 8, 2026 (UTC). Values are exact throughput from the benchmark output.
 
 ### Broad Mix (0B–256B)
 

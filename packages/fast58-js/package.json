@@ -20,10 +20,17 @@
     "index.d.ts",
     "README.md"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "sideEffects": false,
   "scripts": {
     "build": "bun run scripts/build.ts",
     "bundle": "bun run scripts/bundle.ts",
+    "lint": "oxlint src scripts test bench",
+    "lint:fix": "oxlint --fix src scripts test bench",
+    "package:check": "bun run build && npm pack --dry-run",
+    "prepack": "bun run build",
     "test": "bun test",
     "bench": "bun run scripts/bench.ts"
   },
@@ -31,6 +38,7 @@
     "@scure/base": "^2.0.0",
     "@types/bun": "^1.3.11",
     "base-x": "^5.0.1",
-    "bs58": "^6.0.0"
+    "bs58": "^6.0.0",
+    "oxlint": "^1.59.0"
   }
 }

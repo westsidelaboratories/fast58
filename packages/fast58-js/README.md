@@ -1,31 +1,82 @@
 # fast58-js
 
-`fast58-js` is a zero-dependency Base58 package with a `bs58`-compatible API:
+Fast Base58 encode/decode for JavaScript and TypeScript.
 
-```ts
-import fast58 from "fast58-js";
+`fast58-js` is a zero-dependency package with a `bs58`-compatible API shape. It is JavaScript-only: the npm package is built only from `packages/fast58-js/src/index.ts` and ships only `dist`, `index.d.ts`, `README.md`, and `package.json`. Rust/native benchmark code in this repository is not part of this package build or publish output.
 
-const encoded = fast58.encode(new Uint8Array([104, 101, 108, 108, 111]));
-const decoded = fast58.decode(encoded);
-const maybeDecoded = fast58.decodeUnsafe(encoded);
+## Install
+
+```sh
+bun add fast58-js
 ```
 
-Exports:
+```sh
+npm install fast58-js
+```
+
+```sh
+pnpm add fast58-js
+```
+
+```sh
+yarn add fast58-js
+```
+
+## Usage
+
+```ts
+import fast58, { decode, decodeUnsafe, encode } from "fast58-js";
+
+const input = new Uint8Array([104, 101, 108, 108, 111]);
+
+const encoded = encode(input);
+const decoded = decode(encoded);
+const maybeDecoded = decodeUnsafe(encoded);
+
+fast58.encode(input);
+```
+
+## API
+
 - `encode(input: Uint8Array): string`
-- `decodeUnsafe(input: string): Uint8Array | undefined`
+  Encodes bytes into a Base58 string.
 - `decode(input: string): Uint8Array`
+  Decodes a Base58 string and throws `Error("Non-base58 character")` on invalid input.
+- `decodeUnsafe(input: string): Uint8Array | undefined`
+  Decodes a Base58 string and returns `undefined` on invalid input.
+- `default`
+  Object containing `{ encode, decodeUnsafe, decode }`.
 
-Scripts:
+## Runtime Support
+
+- ESM: `dist/index.mjs`
+- CommonJS: `dist/index.cjs`
+- Bun export condition: `dist/index.bun.mjs`
+- Types: `index.d.ts`
+
+## Package Contents
+
+The published tarball is intentionally small and JS-only:
+
+- `dist/index.mjs`
+- `dist/index.cjs`
+- `dist/index.bun.mjs`
+- `index.d.ts`
+- `README.md`
+- `package.json`
+
+## Development
+
 - `bun run build`
+  Builds ESM and CommonJS outputs from `src/index.ts`.
 - `bun run bundle`
+  Builds ESM, CommonJS, and Bun-specific outputs from `src/index.ts`.
 - `bun test`
+  Runs package tests.
 - `bun run bench`
-  Runs a fresh bundle first, then benchmarks `dist/index.bun.mjs`
-
-Bundle outputs:
-- `dist/index.mjs`: production-minified ESM bundle
-- `dist/index.cjs`: production-minified CommonJS bundle
-- `dist/index.bun.mjs`: Bun-targeted minified bundle
+  Runs a fresh bundle first, then benchmarks `dist/index.bun.mjs`.
+- `bun run package:check`
+  Rebuilds and runs `npm pack --dry-run` so the release contents can be inspected before publishing.
 
 ## Benchmark
 

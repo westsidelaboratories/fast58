@@ -120,7 +120,8 @@ export function encodeWithStringConcat(input: ByteInput): string {
 
 export function encodeWithJoin(input: ByteInput): string {
   const { zeroes, digits, first, size } = encodeCore(input);
-  const result = new Array<string>(zeroes + size - first);
+  const result: string[] = [];
+  result.length = zeroes + size - first;
 
   result.fill(LEADING_ZERO, 0, zeroes);
   for (let i = first; i < size; i++) {
