@@ -3,16 +3,20 @@ use napi_derive::napi;
 
 mod algorithms;
 
+use base64::engine::general_purpose::STANDARD as BASE64_STANDARD;
+use base64::Engine;
+use base64::{decoded_len_estimate, encoded_len};
+
 #[napi(js_name = "encode")]
 #[inline(always)]
 pub fn napi_encode(data: Buffer) -> String {
-    algorithms::bs58_u32::encode(&data)
+    algorithms::hybrid_five8_bs58::encode(&data)
 }
 
 #[napi(js_name = "decode")]
 #[inline(always)]
 pub fn napi_decode(data: String) -> Buffer {
-    Buffer::from(algorithms::bs58_rs::decode(&data))
+    Buffer::from(algorithms::hybrid_five8_bs58::decode(&data))
 }
 
 #[napi(js_name = "encodeIter")]
@@ -133,6 +137,57 @@ pub fn napi_encode_hybrid_five8_carry(data: Buffer) -> String {
 #[inline(always)]
 pub fn napi_decode_hybrid_five8_carry(data: String) -> Buffer {
     Buffer::from(algorithms::hybrid_five8_carry::decode(&data))
+}
+
+#[napi(js_name = "encodeBase64")]
+#[inline(always)]
+pub fn napi_encode_base64(data: Buffer) -> String {
+    BASE64_STANDARD.encode(&data)
+}
+
+#[napi(js_name = "decodeBase64")]
+#[inline(always)]
+pub fn napi_decode_base64(data: String) -> Buffer {
+    Buffer::from(BASE64_STANDARD.decode(data).expect("invalid base64"))
+}
+
+#[inline(always)]
+fn base64_decoded_len(data: &[u8]) -> usize {
+    if data.is_empty() {
+        return 0;
+    }
+
+    if data.len() % 4 != 0 {
+        return decoded_len_estimate(data.len());
+    }
+
+    let padding = data.iter().rev().take_while(|&&byte| byte == b'=').count();
+    (data.len() / 4 * 3).saturating_sub(padding)
+}
+
+#[napi(js_name = "encodeBase64Slice")]
+#[inline(always)]
+pub fn napi_encode_base64_slice(data: Buffer) -> String {
+    let encoded_size = encoded_len(data.len(), true).expect("base64 encoded length overflow");
+    let mut output = vec![0u8; encoded_size];
+    let bytes_written = BASE64_STANDARD
+        .encode_slice(&data, &mut output)
+        .expect("base64 output buffer is exactly sized");
+    debug_assert_eq!(bytes_written, encoded_size);
+    unsafe { String::from_utf8_unchecked(output) }
+}
+
+#[napi(js_name = "decodeBase64Slice")]
+#[inline(always)]
+pub fn napi_decode_base64_slice(data: String) -> Buffer {
+    let input = data.as_bytes();
+    let decoded_size = base64_decoded_len(input);
+    let mut output = vec![0u8; decoded_size];
+    let bytes_written = BASE64_STANDARD
+        .decode_slice(input, &mut output)
+        .expect("invalid base64");
+    debug_assert_eq!(bytes_written, decoded_size);
+    Buffer::from(output)
 }
 
 #[cfg(test)]

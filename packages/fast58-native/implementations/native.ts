@@ -108,11 +108,13 @@ export const nativeImplementations = [
 ].filter((implementation): implementation is Implementation => implementation !== null);
 
 export const nativeLoaded = nativeImplementations.length > 0;
-export const nativeEncodeWinnerId = "native/bs58-u32";
-export const nativeDecodeWinnerId = "native/bs58-rs";
+export const nativeEncodeWinnerId = "native/hybrid-five8-bs58";
+export const nativeDecodeWinnerId = "native/hybrid-five8-bs58";
 
 export function getNativeEncode(): (data: ByteInput) => string {
   return (
+    encodeHybridFive8Bs58 ??
+    encodeFive8Fixed ??
     encodeBs58U32 ??
     encodeBs58Opt ??
     encodeBs58Port ??
@@ -125,6 +127,8 @@ export function getNativeEncode(): (data: ByteInput) => string {
 
 export function getNativeDecode(): (data: string) => Buffer {
   return (
+    decodeHybridFive8Bs58 ??
+    decodeFive8Fixed ??
     decodeBs58Rs ??
     decodeBs58Port ??
     decodeBs58U32 ??
