@@ -9,6 +9,8 @@
     "lint:fix": "oxlint --fix benchmark.ts bench implementations index.ts test",
     "test": "bun test",
     "bench": "bun run benchmark.ts",
+    "bench:rust": "cargo run --release --example bench",
+    "bench:rust-vs-js": "bun run bench/rust-vs-js.ts",
     "build:native": "napi build --platform --release"
   },
   "dependencies": {

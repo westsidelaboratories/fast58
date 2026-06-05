@@ -1,5 +1,4 @@
-import bs58 from "bs58";
-import { base58 } from "@scure/base";
+import { loadRivalCandidates, skippedRivals } from "./competitors.ts";
 
 const { default: fast58 } = await import(new URL("../dist/index.bun.mjs", import.meta.url).href);
 
@@ -28,8 +27,8 @@ interface RunSummary {
 
 const TARGET_MS = 120;
 const SAMPLE_COUNT = 3;
-const RUN_COUNT = 5;
-const BS58_BASELINE_NAME = "bs58/base-x";
+const RUN_COUNT = Number(process.env.RUN_COUNT ?? 5);
+const BS58_BASELINE_NAME = "bs58";
 
 const suites: Suite[] = [
   {
@@ -70,16 +69,7 @@ const candidates: Candidate[] = [
     encode: fast58.encode,
     decode: fast58.decode,
   },
-  {
-    name: BS58_BASELINE_NAME,
-    encode: bs58.encode,
-    decode: bs58.decode,
-  },
-  {
-    name: "scure/base",
-    encode: base58.encode,
-    decode: base58.decode,
-  },
+  ...loadRivalCandidates(),
 ];
 
 function makeVector(size: number, seed: number): Uint8Array {
@@ -170,7 +160,7 @@ function makeCases(suite: Suite): BenchCase[] {
     return {
       label: `${size}B`,
       data,
-      encoded: bs58.encode(data),
+      encoded: candidates.find((c) => c.name === BS58_BASELINE_NAME)!.encode(data),
     };
   });
 }
@@ -341,6 +331,12 @@ function printOverallSummary(results: Array<{ suite: Suite; runs: Map<string, Ru
 console.log("fast58-js benchmark");
 console.log("===================");
 console.log("Artifact under test: dist/index.bun.mjs");
+console.log(`Rivals: ${candidates.map((c) => c.name).join(", ")}`);
+if (skippedRivals.length > 0) {
+  for (const skipped of skippedRivals) {
+    console.log(`Skipped: ${skipped.name} — ${skipped.reason}`);
+  }
+}
 console.log(`Runs per suite: ${RUN_COUNT}`);
 console.log(`Samples per case: ${SAMPLE_COUNT}`);
 

@@ -17,6 +17,10 @@ bs58 = "0.5.1"
 fd_bs58 = "0.1.0"
 five8 = "1.0.0"
 
+[[example]]
+name = "bench"
+path = "examples/bench.rs"
+
 [profile.release]
 lto = "fat"
 codegen-units = 1

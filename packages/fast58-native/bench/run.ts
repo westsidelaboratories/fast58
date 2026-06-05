@@ -65,6 +65,7 @@ const DISPLAY_NAMES: Record<string, string> = {
   "native/five8-fixed": "five8 fixed",
   "native/hybrid-five8-bs58": "hybrid five8+bs58",
   "native/hybrid-five8-carry": "hybrid five8+carry",
+  "native/fast58": "fast58 rust",
   "baseline/bs58": "npm bs58 baseline",
 };
 

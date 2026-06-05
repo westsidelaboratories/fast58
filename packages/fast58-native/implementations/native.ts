@@ -93,6 +93,8 @@ const encodeHybridFive8Bs58 = wrapEncode(nativeBinding?.encodeHybridFive8Bs58 ??
 const decodeHybridFive8Bs58 = wrapDecode(nativeBinding?.decodeHybridFive8Bs58 ?? nativeBinding?.decode);
 const encodeHybridFive8Carry = wrapEncode(nativeBinding?.encodeHybridFive8Carry);
 const decodeHybridFive8Carry = wrapDecode(nativeBinding?.decodeHybridFive8Carry);
+const encodeFast58 = wrapEncode(nativeBinding?.encodeFast58 ?? nativeBinding?.encode);
+const decodeFast58 = wrapDecode(nativeBinding?.decodeFast58 ?? nativeBinding?.decode);
 
 export const nativeImplementations = [
   makeImplementation("native/carry-iter", encodeIter, decodeIter),
@@ -105,14 +107,16 @@ export const nativeImplementations = [
   makeImplementation("native/five8-fixed", encodeFive8Fixed, decodeFive8Fixed),
   makeImplementation("native/hybrid-five8-bs58", encodeHybridFive8Bs58, decodeHybridFive8Bs58),
   makeImplementation("native/hybrid-five8-carry", encodeHybridFive8Carry, decodeHybridFive8Carry),
+  makeImplementation("native/fast58", encodeFast58, decodeFast58),
 ].filter((implementation): implementation is Implementation => implementation !== null);
 
 export const nativeLoaded = nativeImplementations.length > 0;
-export const nativeEncodeWinnerId = "native/hybrid-five8-bs58";
-export const nativeDecodeWinnerId = "native/hybrid-five8-bs58";
+export const nativeEncodeWinnerId = "native/fast58";
+export const nativeDecodeWinnerId = "native/fast58";
 
 export function getNativeEncode(): (data: ByteInput) => string {
   return (
+    encodeFast58 ??
     encodeHybridFive8Bs58 ??
     encodeFive8Fixed ??
     encodeBs58U32 ??
@@ -127,6 +131,7 @@ export function getNativeEncode(): (data: ByteInput) => string {
 
 export function getNativeDecode(): (data: string) => Buffer {
   return (
+    decodeFast58 ??
     decodeHybridFive8Bs58 ??
     decodeFive8Fixed ??
     decodeBs58Rs ??

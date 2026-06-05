@@ -55,12 +55,18 @@
     "prepublishOnly": "bun test && bun run lint && bun run package:check",
     "release:check": "bun test && bun run lint && bun run package:check",
     "test": "bun test",
-    "bench": "bun run scripts/bench.ts"
+    "bench": "bun run scripts/bench.ts",
+    "autoresearch": "bun run scripts/autoresearch.ts",
+    "autoresearch:tiny": "bun run scripts/autoresearch-tiny.ts",
+    "bench:rivals": "bun run build && bun run bench/quick-rivals.ts",
+    "bench:all": "bun run build && bun run scripts/bench.ts"
   },
   "devDependencies": {
     "@scure/base": "^2.0.0",
     "@types/bun": "^1.3.11",
     "base-x": "^5.0.1",
+    "base58": "^2.0.1",
+    "base58-js": "^3.0.3",
     "bs58": "^6.0.0",
     "oxlint": "^1.59.0"
   }

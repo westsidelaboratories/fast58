@@ -1,7 +1,10 @@
 use napi::bindgen_prelude::*;
 use napi_derive::napi;
 
-mod algorithms;
+pub mod algorithms;
+pub mod fast58;
+
+pub use fast58::{decode, encode, decode_opt, decode_strict, Fast58Error};
 
 use base64::engine::general_purpose::STANDARD as BASE64_STANDARD;
 use base64::Engine;
@@ -10,13 +13,13 @@ use base64::{decoded_len_estimate, encoded_len};
 #[napi(js_name = "encode")]
 #[inline(always)]
 pub fn napi_encode(data: Buffer) -> String {
-    algorithms::hybrid_five8_bs58::encode(&data)
+    fast58::encode(&data)
 }
 
 #[napi(js_name = "decode")]
 #[inline(always)]
 pub fn napi_decode(data: String) -> Buffer {
-    Buffer::from(algorithms::hybrid_five8_bs58::decode(&data))
+    Buffer::from(fast58::decode(&data))
 }
 
 #[napi(js_name = "encodeIter")]
